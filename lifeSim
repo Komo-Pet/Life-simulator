@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style="display: flex; flex-wrap: nowrap;">
+    <div style="display: flex; flex-wrap: wrap; width: 200px;">
+        <label for="green_to_green">green to green</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="green_to_green" id="green_to_green">
+        <label for="green_to_yellow">green_to_yellow</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="green_to_yellow" id="green_to_yellow">
+        <label for="green_to_red">green_to_red</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="green_to_red" id="green_to_red">
+        <label for="green_to_white">green_to_white</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="green_to_white" id="green_to_white">
+        <label for="yellow_to_yellow">yellow_to_yellow</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="yellow_to_yellow" id="yellow_to_yellow">
+        <label for="yellow_to_green">yellow_to_green</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="yellow_to_green" id="yellow_to_green">
+        <label for="yellow_to_red">yellow_to_red</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="yellow_to_red" id="yellow_to_red">
+        <label for="yellow_to_white">yellow_to_white</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="yellow_to_white" id="yellow_to_white">
+        <label for="red_to_red">red_to_red</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="red_to_red" id="red_to_red">
+        <label for="red_to_yellow">red_to_yellow</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="red_to_yellow" id="red_to_yellow">
+        <label for="red_to_green">red_to_green</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="red_to_green" id="red_to_green">
+        <label for="red_to_white">red_to_white</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="red_to_white" id="red_to_white">
+        <label for="white_to_white">white_to_white</label>
+        <input min="-100" max="100" value="-100" type="range" name="white_to_white" id="white_to_white">
+        <label for="white_to_green">white_to_green</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="white_to_green" id="white_to_green">
+        <label for="white_to_red">white_to_red</label>
+        <input min="-100" max="100" value="(Math.random()*200-100)/100" type="range" name="white_to_red" id="white_to_red">
+        <label for="white_to_yellow">white_to_yellow</label>
+        <input min="-100" max="100" value="${inputValue}" type="range" name="white_to_yellow" id="white_to_yellow">
+    </div>
+
+    <canvas id="life" width="1000" height="1000"></canvas>
+</div>
+    <script>
+        m = document.getElementById('life').getContext('2d')
+
+        
+        inputOnLoad = () => {
+            
+        }
+
+        draw = (x, y, c, s) => {
+            m.fillStyle=c;
+            m.fillRect(x,y,s,s);
+        }
+
+        particles = [];
+        particle = (x,y,c)=>{
+            return{"x":x, "y":y, "vx":0, "vy":0, "color":c}
+        }
+
+        random=()=>{
+            return Math.random()*900+50
+        }
+
+        create=(number,color)=>{
+            group=[]
+            for(let i=0; i < number; i++){
+                group.push(particle(random(), random(), color))
+                particles.push(group[i])
+            }
+            return group
+        }
+
+        rule=(particles1, particles2, g)=>{
+          for(let i = 0; i < particles1.length; i++){
+            fx = 0
+            fy = 0
+            for(let j = 0; j < particles1.length; j++){
+            a = particles1[i]
+            b = particles2[j]
+            dx = a.x - b.x
+            dy = a.y - b.y
+            d = Math.sqrt(dx*dx + dy*dy)
+            if (d > 0 && d < 80) {
+                F = g * 1/d
+                fx += (F * dx)
+                fy += (F * dy)
+            }
+        }
+            a.vx = (a.vx + fx)*0.5
+            a.vy = (a.vy + fy)*0.5
+            a.x += a.vx
+            a.y += a.vy
+            if(a.x <= 0 || a.x >= 1000) { a.vx *=-1}
+            if(a.y <= 0 || a.y >= 1000) { a.vy *=-1}
+        }
+        }
+
+        update=()=>{
+            rule(green, green, 1)
+            rule(green, white, -1)
+            rule(green, red, 0.5)
+            rule(green, yellow, -1)
+            rule(red, green, 1)
+            rule(red, white, -0.5)
+            rule(red, red, 1)
+            rule(red, yellow, -1)
+            rule(yellow, green, 0.5)
+            rule(yellow, white, -1)
+            rule(yellow, red, 1)
+            rule(yellow, yellow, -0.5)
+            rule(white, green, 1)
+            rule(white, white, -1)
+            rule(white, red, 0.5)
+            rule(white, yellow, -1)
+            m.clearRect(0,0,1000,1000)
+            draw(0,0,"black", 1000)
+            for(i=0; i<particles.length; i++){
+                draw(particles[i].x, particles[i].y, particles[i].color, 5)
+            }
+            requestAnimationFrame(update)
+        }
+        yellow = create(200, "yellow");
+        red = create (200, "red");
+        green = create (200, "green");
+        white = create (200, "white");
+        update();
+    </script>
+    
+    
+</body>
+</html>
